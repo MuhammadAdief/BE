@@ -20,7 +20,6 @@ app.get('/', (req, res) => {
 
 // Middleware dan routing lainnya (misalnya userRoutes)
 app.use(express.json());
-
 // Jalankan server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
