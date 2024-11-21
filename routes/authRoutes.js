@@ -1,8 +1,8 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const User = require("models/User.js"); // Pastikan path ini sesuai
 const router = express.Router();
-require("dotenv").config();
+require("dotenv").config(); // Pastikan file `.env` tersedia di root proyek
 
 // Registrasi pengguna baru
 router.post("/register", async (req, res) => {
