@@ -21,12 +21,8 @@ app.get("/", (req, res) => {
 
 // Middleware dan routing lainnya (misalnya userRoutes)
 app.use(express.json());
-// Jalankan server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
+// Menambahkan rute-rute API yang ada
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api/chats", chatRoutes);
 
@@ -44,3 +40,13 @@ app.use("/api/pemesanan", pemesananRoutes);
 
 const destinationRoutes = require("./routes/destinationRoutes");
 app.use("/api/destination", destinationRoutes);
+
+// Menambahkan rute untuk fitur Jadwal
+const jadwalRoutes = require("./routes/jadwalRoutes");
+app.use("/api/jadwal", jadwalRoutes);
+
+// Jalankan server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
