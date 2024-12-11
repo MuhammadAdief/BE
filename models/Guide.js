@@ -1,17 +1,30 @@
+// models/Guide.js
 const mongoose = require("mongoose");
 
-// Define the schema for Guide
-const guideSchema = new mongoose.Schema(
-  {
-    nama: { type: String, required: true },
-    pengalaman: { type: Number, required: true }, // years of experience
-    kebiasaan: { type: String, required: true },
-    gender: { type: String, enum: ["Male", "Female"], required: true },
-    alamat: { type: String, required: true },
-    harga: { type: mongoose.Types.Decimal128, required: true },
-    status_aktif: { type: Boolean, default: true },
+const guideSchema = new mongoose.Schema({
+  nama: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  no_telepon: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  pengalaman: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    default: 0,
+  },
+});
 
-module.exports = mongoose.model("Guide", guideSchema);
+const Guide = mongoose.model("Guide", guideSchema);
+
+module.exports = Guide;

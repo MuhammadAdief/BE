@@ -45,6 +45,9 @@ app.use("/api/destination", destinationRoutes);
 const jadwalRoutes = require("./routes/jadwalRoutes");
 app.use("/api/jadwal", jadwalRoutes);
 
+const penawaranRoutes = require("./routes/penawaranRoutes");
+app.use("/api/penawaran", penawaranRoutes);
+
 // Jalankan server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
