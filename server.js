@@ -45,6 +45,10 @@ app.use("/api/destination", destinationRoutes);
 const jadwalRoutes = require("./routes/jadwalRoutes");
 app.use("/api/jadwal", jadwalRoutes);
 
+// Menambahkan rute untuk fitur Rating
+const ratingRoutes = require("./routes/ratingRoutes");
+app.use("/api/rating", ratingRoutes);
+
 // Jalankan server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
