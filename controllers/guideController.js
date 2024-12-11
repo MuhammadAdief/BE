@@ -1,106 +1,86 @@
 const Guide = require("../models/Guide");
-const { validationResult } = require("express-validator");
 
-// Get semua pemandu
+// Get all guides
 exports.getAllGuides = async (req, res) => {
   try {
     const guides = await Guide.find();
-    if (!guides || guides.length === 0) {
-      return res.status(404).json({ message: "No guides found" });
-    }
     res.status(200).json(guides);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to fetch guides", error: err });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching guides", error });
   }
 };
 
-// Menambahkan pemandu Baru
-exports.addGuide = async (req, res) => {
-  const { name, email, phone, availability } = req.body;
-
-  // Validasi input
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+// Get a single guide by ID
+exports.getGuideById = async (req, res) => {
+  try {
+    const guide = await Guide.findById(req.params.id);
+    if (!guide) {
+      return res.status(404).json({ message: "Guide not found" });
+    }
+    res.status(200).json(guide);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching guide", error });
   }
+};
 
-  if (!name || !email || !phone) {
-    return res
-      .status(400)
-      .json({ message: "Please provide all required fields" });
-  }
+// Create a new guide
+exports.createGuide = async (req, res) => {
+  const { nama, pengalaman, kebiasaan, gender, alamat, harga, status_aktif } =
+    req.body;
 
   try {
-    const existingGuide = await Guide.findOne({ email });
-
-    if (existingGuide) {
-      return res
-        .status(400)
-        .json({ message: "Guide with this email already exists" });
-    }
-
-    const guide = new Guide({
-      name,
-      email,
-      phone,
-      availability: availability || true, // Default: available
+    const newGuide = new Guide({
+      nama,
+      pengalaman,
+      kebiasaan,
+      gender,
+      alamat,
+      harga,
+      status_aktif,
     });
 
-    await guide.save();
-    res.status(201).json({ message: "Guide added successfully", guide });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to add guide", error: err });
+    await newGuide.save();
+    res.status(201).json(newGuide);
+  } catch (error) {
+    res.status(500).json({ message: "Error creating guide", error });
   }
 };
 
-// Perbarui ketersediaan pemandu
-exports.updateAvailability = async (req, res) => {
-  const { guideId } = req.params;
-  const { availability } = req.body;
-
-  if (typeof availability !== "boolean") {
-    return res
-      .status(400)
-      .json({ message: "Availability must be a boolean value" });
-  }
+// Update a guide
+exports.updateGuide = async (req, res) => {
+  const { nama, pengalaman, kebiasaan, gender, alamat, harga, status_aktif } =
+    req.body;
 
   try {
-    const guide = await Guide.findById(guideId);
-
+    const guide = await Guide.findById(req.params.id);
     if (!guide) {
       return res.status(404).json({ message: "Guide not found" });
     }
 
-    guide.availability = availability;
-    await guide.save();
+    guide.nama = nama || guide.nama;
+    guide.pengalaman = pengalaman || guide.pengalaman;
+    guide.kebiasaan = kebiasaan || guide.kebiasaan;
+    guide.gender = gender || guide.gender;
+    guide.alamat = alamat || guide.alamat;
+    guide.harga = harga || guide.harga;
+    guide.status_aktif = status_aktif || guide.status_aktif;
 
-    res
-      .status(200)
-      .json({ message: "Guide availability updated successfully", guide });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: "Failed to update guide availability", error: err });
+    await guide.save();
+    res.status(200).json(guide);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating guide", error });
   }
 };
 
-// Hapus Pemandu
+// Delete a guide
 exports.deleteGuide = async (req, res) => {
-  const { guideId } = req.params;
-
   try {
-    const guide = await Guide.findByIdAndDelete(guideId);
-
+    const guide = await Guide.findByIdAndDelete(req.params.id);
     if (!guide) {
       return res.status(404).json({ message: "Guide not found" });
     }
-
     res.status(200).json({ message: "Guide deleted successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to delete guide", error: err });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting guide", error });
   }
 };

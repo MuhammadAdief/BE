@@ -1,22 +1,23 @@
-const express = require('express');
-const { register, login, getProfile, updateProfile, deleteAccount } = require('../controllers/userController.js');
-const { authenticateToken } = require('../middleware/authMiddleware.js');
-
+const express = require("express");
 const router = express.Router();
+const userController = require("../controllers/userController");
+const { verifyToken, verifyRole } = require("../middleware/authMiddleware");
 
-// User registration route
-router.post('/register', register);
+// Mendapatkan semua pengguna (hanya admin yang dapat mengakses)
+router.get("/", verifyToken, verifyRole("admin"), userController.getAllUsers);
 
-// User login route
-router.post('/login', login);
+// Mendapatkan data pengguna berdasarkan ID
+router.get("/:id", verifyToken, userController.getUserById);
 
-// Get user profile (requires authentication)
-router.get('/profile', authenticateToken, getProfile);
+// Memperbarui data pengguna berdasarkan ID
+router.put("/:id", verifyToken, userController.updateUser);
 
-// Update user profile (requires authentication)
-router.put('/profile', authenticateToken, updateProfile);
-
-// Delete user account (requires authentication)
-router.delete('/delete', authenticateToken, deleteAccount);
+// Menghapus pengguna berdasarkan ID
+router.delete(
+  "/:id",
+  verifyToken,
+  verifyRole("admin"),
+  userController.deleteUser
+);
 
 module.exports = router;

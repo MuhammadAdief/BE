@@ -1,19 +1,33 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-// Middleware to authenticate token
-const authenticateToken = (req, res, next) => {
-  const token = req.header('x-auth-token');
-  if (!token) {
-    return res.status(401).json({ msg: 'No token, authorization denied' });
-  }
-
+// Middleware untuk memverifikasi token JWT
+exports.verifyToken = (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user; // Add user information to the request
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Akses ditolak, token tidak ditemukan" });
+    }
+
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified; // Menyimpan data user dari token
+
     next();
-  } catch (err) {
-    res.status(401).json({ msg: 'Token is not valid' });
+  } catch (error) {
+    res.status(401).json({ message: "Token tidak valid" });
   }
 };
 
-module.exports = { authenticateToken };
+// Middleware untuk memverifikasi role tertentu
+exports.verifyRole = (role) => {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      return res
+        .status(403)
+        .json({ message: "Akses ditolak, role tidak sesuai" });
+    }
+    next();
+  };
+};

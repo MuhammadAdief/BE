@@ -1,6 +1,6 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
 // Load .env file
 dotenv.config();
@@ -9,13 +9,14 @@ dotenv.config();
 const app = express();
 
 // Koneksi ke MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('Failed to connect to MongoDB', err));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Failed to connect to MongoDB", err));
 
 // Rute dasar untuk menangani GET ke '/'
-app.get('/', (req, res) => {
-  res.send('Hello World! Server is running.');
+app.get("/", (req, res) => {
+  res.send("Hello World! Server is running.");
 });
 
 // Middleware dan routing lainnya (misalnya userRoutes)
@@ -25,3 +26,15 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+const chatRoutes = require("./routes/chatRoutes");
+app.use("/api/chats", chatRoutes);
+
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
+const userRoutes = require("./routes/userRoutes");
+app.use("/api/users", userRoutes);
+
+const guideRoutes = require("./routes/guideRoutes");
+app.use("/api/guide", guideRoutes);

@@ -1,110 +1,61 @@
-const User = require('../models/User.js');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const User = require("../models/User");
 
-// Register a new user
-const register = async (req, res) => {
-  const { name, email, password } = req.body;
+// Mendapatkan semua pengguna
+exports.getAllUsers = async (req, res) => {
   try {
-    let user = await User.findOne({ email });
-
-    if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
-    }
-
-    user = new User({
-      name,
-      email,
-      password,
-    });
-
-    await user.save();
-    res.status(201).json({ msg: 'User registered successfully' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Login user
-const login = async (req, res) => {
-  const { email, password } = req.body;
+// Mendapatkan pengguna berdasarkan ID
+exports.getUserById = async (req, res) => {
   try {
-    let user = await User.findOne({ email });
+    const { id } = req.params;
+    const user = await User.findById(id);
 
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
+      return res.status(404).json({ message: "User tidak ditemukan" });
     }
 
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
-      if (err) throw err;
-      res.json({ token });
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Get user profile
-const getProfile = async (req, res) => {
+// Memperbarui data pengguna
+exports.updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const user = await User.findByIdAndUpdate(id, updatedData, { new: true });
+
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(404).json({ message: "User tidak ditemukan" });
     }
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+
+    res.status(200).json({ message: "Data user berhasil diperbarui", user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Update user profile
-const updateProfile = async (req, res) => {
-  const { name, email } = req.body;
+// Menghapus pengguna
+exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const { id } = req.params;
+    const user = await User.findByIdAndDelete(id);
+
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(404).json({ message: "User tidak ditemukan" });
     }
 
-    user.name = name || user.name;
-    user.email = email || user.email;
-
-    await user.save();
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(200).json({ message: "User berhasil dihapus" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
-
-// Delete user account
-const deleteAccount = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
-    }
-
-    await user.remove();
-    res.json({ msg: 'User account deleted' });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-};
-
-module.exports = { register, login, getProfile, updateProfile, deleteAccount };
