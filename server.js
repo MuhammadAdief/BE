@@ -38,3 +38,9 @@ app.use("/api/users", userRoutes);
 
 const guideRoutes = require("./routes/guideRoutes");
 app.use("/api/guide", guideRoutes);
+
+const pemesananRoutes = require("./routes/pemesananRoutes");
+app.use("/api/pemesanan", pemesananRoutes);
+
+const destinationRoutes = require("./routes/destinationRoutes");
+app.use("/api/destination", destinationRoutes);
