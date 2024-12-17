@@ -41,7 +41,7 @@ app.use("/api/pemesanan", pemesananRoutes);
 const destinationRoutes = require("./routes/destinationRoutes");
 app.use("/api/destination", destinationRoutes);
 
-// Menambahkan rute untuk fitur Jadwal
+// Menambahkan rute untuk fitur 
 const jadwalRoutes = require("./routes/jadwalRoutes");
 app.use("/api/jadwal", jadwalRoutes);
 
