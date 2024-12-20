@@ -5,6 +5,18 @@ const dotenv = require("dotenv");
 // Load .env file
 dotenv.config();
 
+
+
+
+
+
+
+
+
+
+
+
+
 // Inisialisasi aplikasi Express
 const app = express();
 
