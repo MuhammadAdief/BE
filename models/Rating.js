@@ -1,15 +1,14 @@
-// models/rating.js
 const mongoose = require("mongoose");
 
-const ratingSchema = new mongoose.Schema({
-  id_rating: { type: String, required: true, unique: true },
-  id_pengguna: { type: String, required: true, ref: "User" },
-  id_destinasi: { type: String, required: true, ref: "Destinasi" },
-  profile_picture: { type: String, default: "" },
-  star_rate: { type: mongoose.Schema.Types.Decimal128, required: true },
-  komen: { type: String, default: "" },
-}, { timestamps: true });
+const ratingSchema = new mongoose.Schema(
+  {
+    id_pengguna: { type: String, required: true, ref: "User" },
+    id_destinasi: { type: String, required: true, ref: "Destinasi" },
+    profile_picture: { type: String, default: "" },
+    star_rate: { type: Number, required: true, min: 0, max: 5 },
+    komen: { type: String, default: "" },
+  },
+  { timestamps: true } // Untuk createdAt & updatedAt otomatis
+);
 
-const Rating = mongoose.model("Rating", ratingSchema);
-
-module.exports = Rating;
+module.exports = mongoose.model("Rating", ratingSchema);
